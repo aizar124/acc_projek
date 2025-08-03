@@ -12,6 +12,10 @@ $query3 = mysqli_query($koneksi,$sql3);
 $sql6 = "SELECT * FROM payments ";
 $query6 = mysqli_query($koneksi,$sql6);
 
+$sql12 = "SELECT * FROM users";
+$query12 = mysqli_query($koneksi,$sql12);
+
+
 $sql7 = "SELECT id_movies,title FROM movies";
 $query7 = mysqli_query($koneksi,$sql7);
 $no = 1;
@@ -814,6 +818,7 @@ button[type="submit"]:hover::after {
       <button onclick="showSection('dashboard movie')"><i class="fas fa-tachometer-alt"></i> DATA MOVIE</button>
       <button onclick="showSection('transaksi')"><i class="fas fa-receipt"></i> DATA TRANSAKSI</button>      
       <button onclick="showSection('dashboard bookings')"><i class="fas fa-calendar-check"></i> DATA BOOKINGS</button>
+      <button onclick="showSection('dashboard user')"><i class="fa-solid fa-user"></i> DATA USER</button>
       <button onclick="showSection('daftar verifikasi')"><i class="fas fa-solid fa-user-check"></i> Daftar Verifikasi</button>
       <button onclick="showSection('management artis')" ><i class="fas fa-solid fa-circle-user"></i>Management Artis</button>
       <button onclick="showSection('movie')"><i class="fas fa-film"></i> Management Movie</button>
@@ -824,6 +829,27 @@ button[type="submit"]:hover::after {
 
     <!-- Content Area -->
     <div class="content">
+      <div id="dashboard user" class="section">
+        <h1><i class="fa-solid fa-user"></i> DATA USER</h1>
+        <table>
+          <tr>
+            <th>Id User</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Status</th>
+          </tr>
+          <?php while($users = mysqli_fetch_assoc($query12)){ ?>
+            <tr>
+              <td><?= $users['id_users'] ?></td>
+              <td><?= $users['username'] ?></td>
+              <td><?= $users['password'] ?></td>
+              <td><?= $users['role'] ?></td>
+            </tr>
+
+          <?php } ?>
+        </table>
+
+      </div>
       <div id="dashboard" class="section active">
         <h1><i class=" fas fa-solid fa-table-columns"></i> DASHBOARD</h1>
         <table>

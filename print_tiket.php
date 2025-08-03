@@ -106,7 +106,11 @@ $f = 1;
     }
 
     /* ===== NAVBAR ===== */
-    header {
+    @font-face {
+  src: url('font/BalsamiqSans.ttf') format('truetype');
+  font-family: 'BalsamiqSans';
+}
+header {
       background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
       padding: 25px 40px;
@@ -119,6 +123,7 @@ $f = 1;
       border-radius: 0 0 30px 30px;
       box-shadow: 0 10px 30px rgba(198, 40, 40, 0.3);
       animation: navFadeIn 1s ease-in-out;
+      font-family: 'BalsamiqSans';
     }
 
     @keyframes navFadeIn {
@@ -689,7 +694,7 @@ $f = 1;
         <div class="dropdown" id="dropdownMenu">
             <?php if(isset($_SESSION['username'])){ ?>
                 <a href="profil_azfa.php"><button>Profil <?= $_SESSION['username'] ?></button></a>
-                <a href="keranjang.php"><button>keranjang</button></a>
+                <a href="keranjang.php"><button>Riwayat Transaksi</button></a>
                 <a href="logout.php"><button>Logout</button></a>
             <?php }else{ ?>
                 <a href="login.php"><button>Sign In</button></a>

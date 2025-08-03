@@ -40,7 +40,16 @@ $menit = $time->format('i');
 
 $kursi = $_POST['kursi']; 
 $jumlah_kursi = count($kursi);
-$total = 35000 * $jumlah_kursi + 3000;
+if($hari == "Monday" || $hari == "Tuesday" || $hari == "Wednesday" ){
+  $harga = 35000;
+}else if ( $hari == "Thursday" || $hari == "Friday"){
+  $harga = 40000;
+}else if ( $hari == "Saturday" || $hari == "Sunday"){
+  $harga = 50000;
+}else{
+  $harga = 0;
+}
+$total = $harga * $jumlah_kursi + 3000;
     
 
 $nm_kursi = [
@@ -61,46 +70,16 @@ $i = 1;
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AZFATiCKET.XXI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-      /* navbar dan body */
-     @font-face {
-      src: url('font/BalsamiqSans.ttf') format('truetype');
-      font-family: 'BalsamiqSans';
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    input[type="radio"] {
-      display: none;
-    }
     body {
-      background: linear-gradient(135deg, #f9f9f9 0%, #fff5f5 100%);
-      font-family: 'BalsamiqSans', sans-serif;
-      animation: fadeIn 1s ease-in;
-      position: relative;
-      overflow-x: hidden;
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f5f5f5;
+      
     }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 20% 30%, rgba(255, 215, 215, 0.8) 0%, rgba(255, 255, 255, 0) 50%),
-                  radial-gradient(circle at 80% 70%, rgba(215, 215, 255, 0.6) 0%, rgba(255, 255, 255, 0) 50%);
-      z-index: -1;
-      opacity: 0.5;
-    }
-
-    /* ===== NAVBAR ===== */
+    /* === NAVBAR === */
     header {
-      background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
+      background-color: #c62828;
       color: white;
       padding: 25px 40px;
       display: flex;
@@ -109,14 +88,20 @@ $i = 1;
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-radius: 0 0 30px 30px;
-      box-shadow: 0 10px 30px rgba(198, 40, 40, 0.3);
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
       animation: navFadeIn 1s ease-in-out;
     }
 
     @keyframes navFadeIn {
-      0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      0% {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .logo {
@@ -124,19 +109,12 @@ $i = 1;
       align-items: center;
       font-weight: bold;
       font-size: 28px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.03);
     }
 
     .logo img {
       margin-right: 10px;
       height: 50px;
       width: auto;
-      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
     }
 
     nav a {
@@ -147,8 +125,6 @@ $i = 1;
       font-size: 18px;
       position: relative;
       transition: all 0.4s ease;
-      padding: 8px 12px;
-      border-radius: 8px;
     }
 
     nav a::after {
@@ -169,7 +145,6 @@ $i = 1;
 
     nav a:hover {
       transform: scale(1.1);
-      background: rgba(255, 255, 255, 0.1);
     }
 
     .profile img {
@@ -178,15 +153,9 @@ $i = 1;
       background-size: contain;
       border-radius: 50%;
       cursor: pointer;
-      transition: transform 0.3s ease;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
 
-    .profile:hover img {
-      transform: scale(1.1);
     }
-
-    .profile a {
+    .profile a{
       text-decoration: none;
     }
 
@@ -194,17 +163,16 @@ $i = 1;
       position: absolute;
       top: 65px;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255,255,255,0.9);
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       backdrop-filter: blur(8px);
       padding: 10px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
       z-index: 100;
-      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .dropdown.active {
@@ -226,57 +194,17 @@ $i = 1;
       border-radius: 12px;
       transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .dropdown button:hover {
       background: linear-gradient(to right, #ff1744, #e53935);
       transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-
-    .dropdown button:hover {
-      background: linear-gradient(to right, #ff1744, #e53935);
-      transform: scale(1.05);
-    }
-
-    .posisi {
-      text-align: center;
-    }
-    .font {
-      font-family: 'KeaniaOne';
-      font-size: 29px;
-      margin-top: 30px;
-      color: #b12a2a;
-      animation: textPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
     }
     
-    @keyframes textPop {
-        0% {
-            transform: scale(0.9);
-            opacity: 0;
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
     
-    .border {
-      width: 30%;
-      margin: 5px auto;
-      border: 1px solid #b12a2a;
-      animation: widthGrow 1s ease-out 0.3s both;
-    }
     
-    @keyframes widthGrow {
-        from { width: 0; }
-        to { width: 30%; }
-    }
+    
+
     .ticket-container {
       display: flex;
       margin: 0 auto;
@@ -576,7 +504,6 @@ $i = 1;
         font-size: 1.5rem;
       }
     }
-    
   </style>
 </head>
 <body>
@@ -595,7 +522,7 @@ $i = 1;
         <div class="dropdown" id="dropdownMenu">
             <?php if(isset($_SESSION['username'])){ ?>
                 <a href="profil_azfa.php"><button>Profil <?= $_SESSION['username'] ?></button></a>
-                <a href="keranjang.php"><button>keranjang</button></a>
+                <a href="keranjang.php"><button>Riwayat Transaksi</button></a>
                 <a href="logout.php"><button>Logout</button></a>
             <?php }else{ ?>
                 <a href="login.php"><button>Sign In</button></a>

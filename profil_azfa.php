@@ -16,6 +16,10 @@ $users = mysqli_fetch_assoc($query);
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Elegant Profil</title>
   <style>
+    @font-face {
+  src: url('font/BalsamiqSans.ttf') format('truetype');
+  font-family: 'BalsamiqSans';
+}
     * {
       margin: 0; padding: 0;
       box-sizing: border-box;
@@ -29,7 +33,7 @@ $users = mysqli_fetch_assoc($query);
 
     /* NAVBAR */
     header {
-      background-color: #c62828;
+      background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
       padding: 25px 40px;
       display: flex;
@@ -38,20 +42,15 @@ $users = mysqli_fetch_assoc($query);
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-radius: 0 0 50px 50px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 10px 30px rgba(198, 40, 40, 0.3);
       animation: navFadeIn 1s ease-in-out;
+      font-family: 'BalsamiqSans';
     }
 
     @keyframes navFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .logo {
@@ -59,12 +58,19 @@ $users = mysqli_fetch_assoc($query);
       align-items: center;
       font-weight: bold;
       font-size: 28px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.03);
     }
 
     .logo img {
       margin-right: 10px;
       height: 50px;
       width: auto;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
     }
 
     nav a {
@@ -75,6 +81,8 @@ $users = mysqli_fetch_assoc($query);
       font-size: 18px;
       position: relative;
       transition: all 0.4s ease;
+      padding: 8px 12px;
+      border-radius: 8px;
     }
 
     nav a::after {
@@ -95,6 +103,7 @@ $users = mysqli_fetch_assoc($query);
 
     nav a:hover {
       transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .profile img {
@@ -103,9 +112,15 @@ $users = mysqli_fetch_assoc($query);
       background-size: contain;
       border-radius: 50%;
       cursor: pointer;
-
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
-    .profile a{
+
+    .profile:hover img {
+      transform: scale(1.1);
+    }
+
+    .profile a {
       text-decoration: none;
     }
 
@@ -113,16 +128,17 @@ $users = mysqli_fetch_assoc($query);
       position: absolute;
       top: 65px;
       right: 0;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(8px);
       padding: 10px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
-      transition: 0.3s ease;
+      transition: all 0.3s ease;
       z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .dropdown.active {
@@ -144,11 +160,13 @@ $users = mysqli_fetch_assoc($query);
       border-radius: 12px;
       transition: all 0.3s ease;
       cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .dropdown button:hover {
       background: linear-gradient(to right, #ff1744, #e53935);
       transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
     /* PROFILE CARD */
@@ -251,6 +269,7 @@ $users = mysqli_fetch_assoc($query);
         <div class="dropdown" id="dropdownMenu">
             <?php if(isset($_SESSION['username'])){ ?>
                 <a href="profil_azfa.php"><button>Profil <?= $_SESSION['username'] ?></button></a>
+                <a href="keranjang.php"><button>Riwayat Transaksi</button></a>
                 <a href="logout.php"><button>Logout</button></a>
             <?php }else{ ?>
                 <a href="login.php"><button>Sign In</button></a>

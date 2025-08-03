@@ -389,7 +389,7 @@ body {
 .about-us {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #ddd;
+  color: black;
   background: rgba(255, 252, 252, 1);
   padding: 30px;
   border-radius: 20px;

@@ -22,10 +22,64 @@ $query = mysqli_query($koneksi,$sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+      .main {
+  margin: 0px 50px 0px 50px;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+
+}
+@font-face {
+  src: url('font/BalsamiqSans.ttf') format('truetype');
+  font-family: 'BalsamiqSans';
+}
+      :root {
+  --primary:rgb(252, 5, 5);
+  --primary-dark:rgb(255, 16, 16);
+  --primary-light: #ff3d3d;
+  --secondary: #1a1a2e;
+  --accent: #ffd700;
+  --text: #333;
+  --text-light: #777;
+  --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --border: rgba(0,0,0,0.1);
+  --shadow: 0 20px 50px rgba(209, 0, 0, 0.15);
+  --transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes slideInItem {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
         /* === NAVBAR === */
     header {
-      background-color: #c62828;
+      background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
       padding: 25px 40px;
       display: flex;
@@ -34,20 +88,15 @@ $query = mysqli_query($koneksi,$sql);
       position: sticky;
       top: 0;
       z-index: 1000;
-      border-radius: 0 0 50px 50px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 10px 30px rgba(198, 40, 40, 0.3);
       animation: navFadeIn 1s ease-in-out;
+      font-family: 'BalsamiqSans';
     }
 
     @keyframes navFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .logo {
@@ -55,12 +104,19 @@ $query = mysqli_query($koneksi,$sql);
       align-items: center;
       font-weight: bold;
       font-size: 28px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.03);
     }
 
     .logo img {
       margin-right: 10px;
       height: 50px;
       width: auto;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
     }
 
     nav a {
@@ -71,6 +127,8 @@ $query = mysqli_query($koneksi,$sql);
       font-size: 18px;
       position: relative;
       transition: all 0.4s ease;
+      padding: 8px 12px;
+      border-radius: 8px;
     }
 
     nav a::after {
@@ -91,6 +149,7 @@ $query = mysqli_query($koneksi,$sql);
 
     nav a:hover {
       transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .profile img {
@@ -99,9 +158,15 @@ $query = mysqli_query($koneksi,$sql);
       background-size: contain;
       border-radius: 50%;
       cursor: pointer;
-
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
-    .profile a{
+
+    .profile:hover img {
+      transform: scale(1.1);
+    }
+
+    .profile a {
       text-decoration: none;
     }
 
@@ -109,16 +174,17 @@ $query = mysqli_query($koneksi,$sql);
       position: absolute;
       top: 65px;
       right: 0;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(8px);
       padding: 10px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
-      transition: 0.3s ease;
+      transition: all 0.3s ease;
       z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .dropdown.active {
@@ -140,11 +206,13 @@ $query = mysqli_query($koneksi,$sql);
       border-radius: 12px;
       transition: all 0.3s ease;
       cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .dropdown button:hover {
       background: linear-gradient(to right, #ff1744, #e53935);
       transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
     /* isi */
@@ -216,6 +284,66 @@ $query = mysqli_query($koneksi,$sql);
       cursor: pointer;
     }
 
+    table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 15px;
+  min-width: 800px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  animation: fadeIn 0.8s ease;
+  position: relative;
+  z-index: 1;
+}
+
+th {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  
+  color: white;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(209, 0, 0, 0.1);
+  vertical-align: middle;
+  color: var(--text);
+  background: white;
+  transition: var(--transition);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: rgba(209, 0, 0, 0.03);
+  transform: scale(1.01);
+}
+@media (max-width: 768px) {
+  .navbar {
+    padding: 20px 25px;
+  }
+  .navbar .logo {
+    font-size: 22px;
+  }
+  table {
+    font-size: 14px;
+  }
+  th, td {
+    padding: 12px 8px;
+  }
+}
+
     </style>
 </head>
 <body>
@@ -257,29 +385,35 @@ $query = mysqli_query($koneksi,$sql);
     }
   </script>
 
-  <main class="movie-container">
+  <div class="main">
+    <table>
+    <tr>
+      <th>Judul</th>
+      <th>Total Harga</th>
+      <th>Status</th>
+    </tr>
     <?php while($pesanan = mysqli_fetch_assoc($query)) { ?>
-    <section class="movie-card">
-        <div class="movie-jarak">
-            <img class="poster" src="movie/<?= $pesanan['poster_image'] ?>" alt="">
-            <div class="info">
-                <h4><?= $pesanan['title'] ?></h4><h4><?= $pesanan['total_price'] ?></h4>
-                <?php if($pesanan['status']== "terverifikasi"){?>
+                <tr>
+                  <td><h4><?= $pesanan['title'] ?></h4></td>
+                  <td><h4><?= $pesanan['total_price'] ?></h4></td>
+                  <td><?php if($pesanan['status']== "terverifikasi"){?>
                     <form action="tiket.php" method="post">
                       <input type="hidden" name="id_movies" value="<?= $pesanan['id_movies'] ?>">
                       <input type="hidden" name="id_bookings" value= "<?= $pesanan['id_bookings'] ?>">
                       <input type="hidden" name="mtd_payments" value= "<?= $pesanan['mtd_payments'] ?>">
-                      <button type="submit" style="background: linear-gradient(135deg, #f44336, #c62828); color: white;"><i class="fas fa-regular fa-eye"></i> View</button>
+                      <div class="info"><button type="submit" style="background: linear-gradient(135deg, #f44336, #c62828); color: white;"><i class="fas fa-regular fa-eye"></i> View</button></div>
                     </form>
                 <?php }else{ ?>
-                    <button><?= strtoupper($pesanan['status']) ?></button> 
-                <?php } ?>
+                    <div class="info"><button><?= strtoupper($pesanan['status']) ?></button></div>
+                <?php } ?></td>
                 
-            </div>
-        </div>
-    </section>
+                </tr>
+              
+                
     <?php } ?>
-
-  </main>
+</table>
+  </div>
+    
+  
 </body>
 </html>
