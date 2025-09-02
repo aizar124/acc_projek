@@ -3,8 +3,9 @@ include "koneksi.php";
 
 $username = $_POST['username'];
 $password = $_POST['password'];
+$email = $_POST['email'];
 
-$sql = "INSERT INTO users (username,password,role) VALUES ('$username',md5('$password'),'customer')";
+$sql = "INSERT INTO users (username,password,role,gmail) VALUES ('$username',md5('$password'),'customer','$email')";
 $query = mysqli_query($koneksi,$sql);
 
 if($query){

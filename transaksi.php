@@ -50,6 +50,7 @@ if($hari == "Monday" || $hari == "Tuesday" || $hari == "Wednesday" ){
   $harga = 0;
 }
 $total = $harga * $jumlah_kursi + 3000;
+
     
 
 $nm_kursi = [
@@ -564,7 +565,7 @@ $i = 1;
             $i += 1;
 
             echo htmlspecialchars($array_kursi);
-        } ?>)</span> <span>Rp. 35.000 x <?= $jumlah_kursi ?></span></p>
+        } ?>)</span> <span>Rp. <?= number_format($harga, 0, ',', '.'); ?> x <?= $jumlah_kursi ?></span></p>
         <p><span>Layanan</span> <span>Rp. 3.000</span></p>
         <p class="total"><span>Total Pembayaran:</span> <span>Rp. <?= $total ?></span></p>
       </div>
@@ -578,6 +579,7 @@ $i = 1;
         <input type="hidden" name="tanggal" value="<?= $tanggal ?>">
         <input type="hidden" name="waktu" value="<?= $waktu ?>">
         <input type="hidden" name="total" value="<?= $total ?>">
+        <input type="hidden" name="price" value="<?= $harga ?>">
         
         <div class="payment-method">
           <h3>Metode Pembayaran</h3>

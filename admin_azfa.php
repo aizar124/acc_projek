@@ -6,7 +6,7 @@ $query = mysqli_query($koneksi,$sql);
 $sql2 = "SELECT * FROM movies ";
 $query2 = mysqli_query($koneksi,$sql2);
 
-$sql3 = "SELECT * FROM bookings WHERE status='pending' ";
+$sql3 = "SELECT b.id_bookings, b.id_users, b.seats_booked, b.price, b.booking_date, b.booking_time, b.id_movies,p.mtd_image FROM bookings b join payments p on b.id_payments = p.id_payments WHERE status='pending' ORDER BY id_bookings DESC ";
 $query3 = mysqli_query($koneksi,$sql3);
 
 $sql6 = "SELECT * FROM payments ";
@@ -50,6 +50,10 @@ if(isset($_POST['tokoh'])){
 }else{
     $tokoh = 1;
 }
+
+$sql13 = "SELECT id_payments FROM payments ORDER BY id_payments DESC" ;
+$query13 = mysqli_query($koneksi,$sql13);
+
 
 
 ?>
@@ -836,6 +840,7 @@ button[type="submit"]:hover::after {
             <th>Id User</th>
             <th>Username</th>
             <th>Password</th>
+            <th>Email</th>
             <th>Status</th>
           </tr>
           <?php while($users = mysqli_fetch_assoc($query12)){ ?>
@@ -843,6 +848,7 @@ button[type="submit"]:hover::after {
               <td><?= $users['id_users'] ?></td>
               <td><?= $users['username'] ?></td>
               <td><?= $users['password'] ?></td>
+              <td><?= $users['gmail'] ?></td>
               <td><?= $users['role'] ?></td>
             </tr>
 
@@ -874,7 +880,7 @@ button[type="submit"]:hover::after {
             while($join = mysqli_fetch_assoc($query7)){
               $title = $join['title'];
               $id_movies = $join['id_movies'];
-              $sql8 = "SELECT SUM(p.amount) AS total_amount, COUNT(b.id_bookings) AS jumlah_pnj FROM payments p JOIN bookings b ON p.id_payments = b.id_payments WHERE b.status = 'terverifikasi' AND b.id_movies = $id_movies AND MONTH(p.payment_date) = $bulan";
+              $sql8 = "SELECT SUM(p.total_price) AS total_amount, COUNT(b.id_bookings) AS jumlah_pnj FROM payments p JOIN bookings b ON p.id_payments = b.id_payments WHERE b.status = 'terverifikasi' AND b.id_movies = $id_movies AND MONTH(p.payment_date) = $bulan";
               $query8 = mysqli_query($koneksi,$sql8);
               $data = mysqli_fetch_assoc($query8);
               $subtotal = $data['total_amount'];
@@ -931,37 +937,19 @@ button[type="submit"]:hover::after {
             <th>Id User</th>
             <th>Total Harga</th>
             <th>Metode Pembayaran</th>
-            <th>Bukti Transaksi</th>
             <th>Tanggal Transaksi</th>
           </tr>
           <?php while($payments = mysqli_fetch_assoc($query6)){ ?>
             <tr>
               <td><?= $payments['id_payments'] ?></td>
               <td><?= $payments['id_users'] ?></td>
-              <td><?= $payments['amount'] ?></td>
+              <td><?= $payments['total_price'] ?></td>
               <td><?= $payments['mtd_payments'] ?></td>
-              <td><a href="#" onclick="showPopup('bukti_pembayaran/<?= $payments['mtd_image'] ?>')" style="background: linear-gradient(135deg, #f44336, #c62828); color: white;"><i class="fas fa-regular fa-eye"></i>View</a></td>
               <td><?= $payments['payment_date'] ?></td>
             </tr>
           <?php } ?>
         </table>
-        <div id="imagePopup" class="popup" onclick="hidePopup()">
-          <div class="popup-content" onclick="event.stopPropagation()">
-            <span class="close" onclick="hidePopup()">&times;</span>
-            <img id="popupImg" src="" alt="Gambar">
-          </div>
-        </div>
-
-        <script>
-          function showPopup(src) {
-            document.getElementById('popupImg').src = src;
-            document.getElementById('imagePopup').style.display = 'block';
-          }
-
-          function hidePopup() {
-            document.getElementById('imagePopup').style.display = 'none';
-          }
-        </script>
+        
       </div>
 
       <div id="dashboard movie" class="section">
@@ -1005,7 +993,7 @@ button[type="submit"]:hover::after {
             <th>Id Bookings</th>
             <th>Id Users</th>
             <th>Seats Booked</th>
-            <th>Total Price</th>
+            <th>Price</th>
             <th>Booking Date</th>
             <th>Booking Time</th>
             <th>Id Movies</th>
@@ -1016,7 +1004,7 @@ button[type="submit"]:hover::after {
               <td><?= $booking['id_bookings']; ?></td>
               <td><?= $booking['id_users']; ?></td>
               <td><?= $booking['seats_booked']; ?></td>
-              <td><?= $booking['total_price']; ?></td>
+              <td><?= $booking['price']; ?></td>
               <td><?= $booking['booking_date']; ?></td>
               <td><?= $booking['booking_time']; ?></td>
               <td><?= $booking['id_movies']; ?></td>
@@ -1050,30 +1038,110 @@ button[type="submit"]:hover::after {
         
         <table>
             <tr>
+                <th>Id Payments</th>
                 <th>Id Bookings</th>
                 <th>Id Users</th>
+                <th>Id Movies</th>
                 <th>Seats Booked</th>
                 <th>Total Price</th>
-                <th>Booking date</th>
+                <th>Bukti Transaksi</th>
                 <th>Booking Time</th>
-                <th>Id Movies</th>
+                <th>Booking date</th>
                 <th>Aksi</th>
             </tr>
-            <?php while($bookings = mysqli_fetch_assoc($query3)): ?>
+            <?php 
+            while($coba1 = mysqli_fetch_assoc($query13)){
+                $j = 1;
+                $i = 1;
+            
+                $text1 = "";
+                $text2 = "";
+                $id_payments = $coba1['id_payments'];
+                $sql14 = "SELECT id_bookings,seats_booked FROM bookings WHERE id_payments = '$id_payments' ";
+                $query14 = mysqli_query($koneksi,$sql14);
+                $gabungan1 = [];
+                $gabungan2 = [];
+                
+                while($coba2 = mysqli_fetch_assoc($query14)){
+                    $gabungan1[] = $coba2['id_bookings'];
+                    $gabungan2[] = $coba2['seats_booked'];
+                }
+                $sql14 = "SELECT b.id_users,p.total_price,b.booking_date,b.booking_time,b.id_movies,p.mtd_image FROM bookings b JOIN payments p ON b.id_payments = p.id_payments WHERE b.id_payments = '$id_payments' AND b.status = 'pending' LIMIT 1";
+                $query14 = mysqli_query($koneksi,$sql14);
+                while($coba3 = mysqli_fetch_assoc($query14)){
+                    foreach($gabungan1 as $id_bookings){
+                        if($j !== 1){
+                            $text1 = $text1 . ", ";
+                        }
+                        $text1 = $text1 . $id_bookings;
+                        $j += 1;
+                        
+                    }
+                    foreach($gabungan2 as $seats_booked){
+                        if($i !== 1){
+                            $text2 = $text2 . ", ";
+                        }
+                        $text2 = $text2 . $seats_booked;
+                        $i += 1;
+                    }
+                    
+                    $url = 'verifikasi_bookings.php?';
+                    $url2 = 'tolak_bookings.php?';
+
+                    foreach ($gabungan1 as $h) {
+                        $url .= 'id[]=' . urlencode($h) . '&';
+                    }
+                    foreach ($gabungan1 as $h) {
+                        $url2 .= 'id[]=' . urlencode($h) . '&';
+                    }
+
+                    $url = rtrim($url, '&'); // hapus & terakhir
+                    $url2 = rtrim($url2, '&'); // hapus & terakhir
+
+
+
+        ?>
             <tr>
-                <td><?= htmlspecialchars($bookings['id_bookings']) ?></td>
-                <td><?= htmlspecialchars($bookings['id_users']) ?></td>
-                <td><?= htmlspecialchars($bookings['seats_booked']) ?></td>
-                <td><?= number_format($bookings['total_price'], 0, ',', '.') ?></td>
-                <td><?= htmlspecialchars($bookings['booking_date']) ?></td>
-                <td><?= htmlspecialchars($bookings['booking_time']) ?></td>
-                <td><?= htmlspecialchars($bookings['id_movies']) ?></td>
+                <td><?= $id_payments ?></td>
+                <td><?= $text1 ?></td>
+                <td><?= $coba3['id_users'] ?></td>
+                <td><?= $coba3['id_movies'] ?></td>
+                <td><?= $text2 ?></td>
+                <td><?= number_format($coba3['total_price'], 0, ',', '.') ?></td>
+                <td><a href="#" onclick="showPopup('bukti_pembayaran/<?= $coba3['mtd_image'] ?>')" style="background: linear-gradient(135deg, #f44336, #c62828); color: white;"><i class="fas fa-regular fa-eye"></i>View</a></td>
+                <td><?= $coba3['booking_time'] ?></td>
+                <td><?= $coba3['booking_date'] ?></td>
                 <td>
-                    <a href="verifikasi_bookings.php?id=<?= $bookings['id_bookings'] ?>" class="verify-btn"><i class="fas fa-check"></i> Verifikasi</a>
-                    <a href="tolak_bookings.php?id=<?= $bookings['id_bookings']?>" class="verify-btn"><i class="fas fa-solid fa-xmark"></i> Tolak</a>
+                  
+                    <a href="<?= $url ?>" class="verify-btn"><i class="fas fa-check"></i> Verifikasi</a>
+                    <a href="<?= $url2 ?>" class="verify-btn"><i class="fas fa-solid fa-xmark"></i> Tolak</a>
                 </td>
+                
+                
+                
+                
             </tr>
-            <?php endwhile; ?>
+            <div id="imagePopup" class="popup" onclick="hidePopup()">
+          <div class="popup-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="hidePopup()">&times;</span>
+            <img id="popupImg" src="" alt="Gambar">
+          </div>
+        </div>
+
+        <script>
+          function showPopup(src) {
+            document.getElementById('popupImg').src = src;
+            document.getElementById('imagePopup').style.display = 'block';
+          }
+
+          function hidePopup() {
+            document.getElementById('imagePopup').style.display = 'none';
+          }
+        </script>
+        
+
+            <?php } ?>
+        <?php } ?>
         </table>
       </div>
       
@@ -1126,34 +1194,40 @@ button[type="submit"]:hover::after {
       <div id="jadwal" class="section">
         <h1><i class="fas fa-clock"></i> TAMBAH JADWAL</h1>
         <form action="admin_azfa.php" method="post" style="margin-bottom: 30px;">
-            <label for="">Jumlah Jadwal</label>
+            <label for="">Jumlah Jadwal Waktu</label>
             <input type="number" name="jumlah" id="" min="1" max="10">
             <input type="submit" value="Generate Form" style="margin-left: 15px;">
         </form>
         
         <form action="prs_tambah_jadwal.php" method="post">
-            <?php while($jumlah >= 1){ ?>
-                <div style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed var(--border);">
-                    <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;">Jadwal #<?= $jumlah ?></h3>
-                    <label for="">Tanggal</label>
-                    <input type="date" name="tanggal[]" id="">
-                    
-                    <label for="">Waktu</label>
-                    <input type="time" name="waktu[]" id="">
-                    
-                    <label for="">Id Movies</label>
-                    <select  name="id_movies[]" id="">
+          <label for="">Id Movies</label>
+                <select  name="id_movies" id="">
                     <?php
                       $sql4 = "SELECT id_movies FROM movies ";
                       $query4 = mysqli_query($koneksi,$sql4);
                       while($id = mysqli_fetch_assoc($query4)){
                     ?>
-                      <option value="<?= $id['id_movies'] ?>"><?= $id['id_movies'] ?></option>
+            <option value="<?= $id['id_movies'] ?>"><?= $id['id_movies'] ?></option>
                     <?php } ?>
                     </select>
+            <label for="">Tanggal Awal</label>
+            <input type="date" name="tanggal_awal" id="">
+            <label for="">Tanggal Akhir</label>
+            <input type="date" name="tanggal" id="">
+          
+            <?php while($jumlah >= 1){ ?>
+                <div style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed var(--border);">
+                    <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;">Jadwal Waktu #<?= $jumlah ?></h3>
                     
+                    
+                    <label for="">Waktu</label>
+                    <input type="time" name="waktu[]" id="">
+                      
                 </div>
+                
+                      
             <?php $jumlah -= 1;} ?>
+            
             <input type="submit" value="Simpan Jadwal" name="tambah">
         </form>
       </div>

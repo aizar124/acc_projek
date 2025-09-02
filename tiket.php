@@ -30,7 +30,7 @@ $tanggal_hari = $date->format('d');
 $bulan = $date->format('M');
 $tahun = $date->format('Y');
 
-$total = $bookings['total_price'];
+$total = $bookings['price'];
 
 $kursi = $bookings['seats_booked'];
 $nm_kursi = [
@@ -511,7 +511,7 @@ $f = 1;
     
     /* === PRINT SPECIFIC STYLES === */
     @media print {
-      .navbar, button {
+      header, button {
         display: none;
       }
     

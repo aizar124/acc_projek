@@ -9,7 +9,7 @@ $query2 = mysqli_query($koneksi,$sql2);
 $users = mysqli_fetch_assoc($query2);
 $user = $users['id_users'];
 
-$sql = "SELECT  m.id_movies,m.title, m.poster_image, b.total_price, b.status, p.mtd_payments, b.id_bookings FROM bookings b
+$sql = "SELECT  m.id_movies,m.title, m.poster_image, b.price, b.status, p.mtd_payments, b.id_bookings FROM bookings b
         JOIN movies m ON b.id_movies = m.id_movies JOIN payments p ON p.id_payments = b.id_payments WHERE b.id_users = '$user'";
 $query = mysqli_query($koneksi,$sql);
 
@@ -344,6 +344,7 @@ tr:hover td {
   }
 }
 
+
     </style>
 </head>
 <body>
@@ -391,21 +392,22 @@ tr:hover td {
       <th>Judul</th>
       <th>Total Harga</th>
       <th>Status</th>
+      <th>Aksi</th>
     </tr>
     <?php while($pesanan = mysqli_fetch_assoc($query)) { ?>
                 <tr>
                   <td><h4><?= $pesanan['title'] ?></h4></td>
-                  <td><h4><?= $pesanan['total_price'] ?></h4></td>
-                  <td><?php if($pesanan['status']== "terverifikasi"){?>
+                  <td><h4><?= $pesanan['price'] ?></h4></td>
+                  <td><h4><?= $pesanan['status'] ?></h4></td>
+                <td><?php if($pesanan['status']== "terverifikasi"){?>
                     <form action="tiket.php" method="post">
                       <input type="hidden" name="id_movies" value="<?= $pesanan['id_movies'] ?>">
                       <input type="hidden" name="id_bookings" value= "<?= $pesanan['id_bookings'] ?>">
                       <input type="hidden" name="mtd_payments" value= "<?= $pesanan['mtd_payments'] ?>">
                       <div class="info"><button type="submit" style="background: linear-gradient(135deg, #f44336, #c62828); color: white;"><i class="fas fa-regular fa-eye"></i> View</button></div>
                     </form>
-                <?php }else{ ?>
-                    <div class="info"><button><?= strtoupper($pesanan['status']) ?></button></div>
-                <?php } ?></td>
+                    <?php } ?>
+                </td>
                 
                 </tr>
               

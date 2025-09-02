@@ -12,7 +12,7 @@ $movies = mysqli_fetch_assoc($query);
 $sql2 = "SELECT * FROM jadwal_waktu WHERE id_movies = '$id_movies'";
 $query2 = mysqli_query($koneksi,$sql2);
 
-$sql3 = "SELECT DATE_FORMAT(waktu, '%H:%i') AS waktu, id_jadwal_waktu FROM jadwal_waktu WHERE id_movies = '$id_movies'";  
+$sql3 = "SELECT DATE_FORMAT(waktu, '%H:%i') AS waktu, id_waktu FROM tbl_waktu WHERE id_movies = '$id_movies'";  
 $query3 = mysqli_query($koneksi,$sql3);
 
 $waktu = $movies['duration'];
@@ -21,7 +21,13 @@ $jam = $time->format('H');
 $menit = $time->format('i');
 $totalMenit = ($jam * 60) + $menit;
 
-$id = 1;
+$id = 300;
+
+$tanggal_akhir = null;
+$result = $koneksi->query("SELECT tanggal,tanggal_mulai FROM jadwal_waktu WHERE id_movies = $id_movies LIMIT 1");
+    $row = $result->fetch_assoc();
+    $tanggal_akhir = $row ? $row['tanggal'] : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -747,27 +753,36 @@ $id = 1;
             <div class="schedules">
               <strong>SCHEDULES</strong>
               <div class="days">
-                <?php while($tanggal = mysqli_fetch_assoc($query2)){
-                  $date = new DateTime($tanggal['tanggal']);
-                  $tanggal_hari = $date->format('d');
-                  $nama_hari = $date->format('l'); 
-                  $nm_hari = [
+                <?php 
+                  $nama_hari = [
                     'Monday' => 'SENIN', 'Tuesday' => 'SELASA', 'Wednesday' => 'RABU', 'Thursday' => 'KAMIS',
                     'Friday' => 'JUMAT', 'Saturday' => 'SABTU', 'Sunday' => 'MINGGU'
                   ];
-                  $array_hari = $nm_hari[$nama_hari];
-                  $id++;
+            //       $tanggal_mulai = date("Y-m-d", strtotime("+1 day")); // besok
+            // $batas_akhir = min($tanggal_akhir, date("Y-m-d", strtotime("+7 days")));
+            // $selisih = (strtotime($batas_akhir) - strtotime($tanggal_mulai)) / (60 * 60 * 24);
+            // $jumlah_hari = min(7, $selisih + 1);
+                    $tanggal_mulai = $row['tanggal_mulai'];
+                    $selisih = (strtotime($tanggal_akhir) - strtotime($tanggal_mulai)) / (60 * 60 * 24);
+                    $jumlah_hari = min(7, $selisih + 1);
+                for ($i = 0; $i < $jumlah_hari; $i++) {
+                    $tgl = date("Y-m-d", strtotime("+$i days", strtotime($tanggal_mulai)));
+                    $label = date("d/m/Y", strtotime($tgl));
+                    $hari = date("l", strtotime($tgl));
+                    $tanggal_hari = date("d", strtotime($tgl));
+                
+            
                 ?>
-                  <input type="radio" id="<?= $id ?>" name="tanggal" value="<?= $tanggal['tanggal'] ?>">
-                  <label for="<?= $id ?>"><?= ucfirst($array_hari) ?><br><?= $tanggal_hari ?></label>
-                <?php } ?>
+                  <input type="radio" id="<?= $id ?>" name="tanggal" value="<?= $tgl ?>">
+                  <label for="<?= $id ?>"><?= ucfirst($nama_hari[$hari]) ?><br><?= $tanggal_hari ?></label>
+                <?php $id++; } ?>
               </div>
 
               <strong>TIME MOVIE</strong>
               <div class="times">
                 <?php while($waktu = mysqli_fetch_assoc($query3)){ ?>
-                  <input type="radio" id="<?= $waktu['id_jadwal_waktu'] ?>" name="waktu" value="<?= $waktu['waktu'] ?>">
-                  <label for="<?= $waktu['id_jadwal_waktu'] ?>"><?= $waktu['waktu'] ?></label>
+                  <input type="radio" id="<?= $waktu['id_waktu'] ?>" name="waktu" value="<?= $waktu['waktu'] ?>">
+                  <label for="<?= $waktu['id_waktu'] ?>"><?= $waktu['waktu'] ?></label>
                 <?php } ?>
               </div>
             </div>

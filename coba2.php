@@ -1,0 +1,1 @@
+.navbar, button {display: none;}.ticket-wrapper {margin: 0;padding: 0;height: 100vh;display: flex;justify-content: center;align-items: center;}.ticket-card {box-shadow: none;border: 1px solid #ddd;transform: none !important;animation: none;height: auto;}body {background-color: white;}.ticket-card::before {height: 6px;}.barcode::before {animation: none;}.poster {height: 200px;}

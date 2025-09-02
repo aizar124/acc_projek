@@ -1,62 +1,41 @@
+<?php
+include "koneksi.php";
+$id_movies = 19;
+
+$result = $koneksi->query("SELECT tanggal,tanggal_mulai FROM jadwal_waktu WHERE id_movies = $id_movies LIMIT 1");
+    $row = $result->fetch_assoc();
+    $tanggal_akhir = $row ? $row['tanggal'] : null;
+$id = 300;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Popup Gambar</title>
-  <style>
-    .popup {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .popup-content {
-      position: relative;
-      margin: 10% auto;
-      padding: 20px;
-      width: 60%;
-      background: white;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .popup-content img {
-      max-width: 100%;
-      height: auto;
-    }
-    .close {
-      position: absolute;
-      top: 10px; right: 20px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-
-<!-- Link untuk melihat gambar -->
-<a href="#" onclick="showPopup('bukti_pembayaran/<?= $payments['mtd_image'] ?>')">View</a>
-
-<!-- Popup -->
-<div id="imagePopup" class="popup" onclick="hidePopup()">
-  <div class="popup-content" onclick="event.stopPropagation()">
-    <span class="close" onclick="hidePopup()">&times;</span>
-    <img id="popupImg" src="" alt="Gambar">
-  </div>
-</div>
-
-<script>
-  function showPopup(src) {
-    document.getElementById('popupImg').src = src;
-    document.getElementById('imagePopup').style.display = 'block';
-  }
-
-  function hidePopup() {
-    document.getElementById('imagePopup').style.display = 'none';
-  }
-</script>
-
+    <?php 
+                  $nama_hari = [
+                    'Monday' => 'SENIN', 'Tuesday' => 'SELASA', 'Wednesday' => 'RABU', 'Thursday' => 'KAMIS',
+                    'Friday' => 'JUMAT', 'Saturday' => 'SABTU', 'Sunday' => 'MINGGU'
+                  ];
+                  $tanggal_mulai = $row['tanggal_mulai'];
+                //   $tanggal_mulai = date("Y-m-d", strtotime("+1 day"));
+                    // $batas_akhir = min($tanggal_akhir, date("Y-m-d", strtotime("+7 days")));
+                    $selisih = (strtotime($tanggal_akhir) - strtotime($tanggal_mulai)) / (60 * 60 * 24);
+                    $jumlah_hari = min(7, $selisih + 1);
+                    echo "hai ".$jumlah_hari;
+                for ($i = 0; $i < $jumlah_hari; $i++) {
+                    $tgl = date("Y-m-d", strtotime("+$i days", strtotime($tanggal_mulai)));
+                    $label = date("d/m/Y", strtotime($tgl));
+                    $hari = date("l", strtotime($tgl));
+                    $tanggal_hari = date("d", strtotime($tgl));
+                 
+            
+                ?>
+                  <input type="radio" id="<?= $id ?>" name="tanggal" value="<?= $tgl ?>">
+                  <label for="<?= $id ?>"><?= ucfirst($nama_hari[$hari]) ?><br><?= $tanggal_hari ?></label>
+<?php $id++; } ?>
 </body>
 </html>

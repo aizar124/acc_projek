@@ -407,7 +407,6 @@ session_start();
         <div class="dropdown" id="dropdownMenu">
             <?php if(isset($_SESSION['username'])){ ?>
                 <a href="profil_azfa.php"><button>Profil <?= $_SESSION['username'] ?></button></a>
-                <a href="keranjang.php"><button>Riwayat Transaksi</button></a>
                 <a href="logout.php"><button>Logout</button></a>
             <?php }else{ ?>
                 <a href="login.php"><button>Sign In</button></a>
@@ -449,6 +448,10 @@ session_start();
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
                         <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="email" placeholder="email" required>
                     </div>
                     <button type="submit">CREATE</button>
                     

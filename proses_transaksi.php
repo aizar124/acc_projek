@@ -12,6 +12,7 @@ $id_movies = $_POST['id_movies'];
 $waktu= $_POST['waktu'];
 $tanggal = $_POST['tanggal'];
 $total = $_POST['total'];
+$price = $_POST['price'];
 
 $tempat_gmbr = "bukti_pembayaran/";
 $nama_random = uniqid().".jpg";
@@ -44,7 +45,7 @@ if ($syaratUPLD == 0) {
 }
 $method_payments = $_POST['payment_method'];
 $datetime = date('Y-m-d H:i:s');
-$sql4 = "INSERT INTO payments (payment_date,amount,mtd_payments,mtd_image,id_users) VALUES ('$datetime','$total','$method_payments','$nama_random','$id_user')";
+$sql4 = "INSERT INTO payments (payment_date,total_price,mtd_payments,mtd_image,id_users) VALUES ('$datetime','$total','$method_payments','$nama_random','$id_user')";
 $query4 = mysqli_query($koneksi,$sql4);
 $sql5 = "SELECT id_payments FROM payments ORDER BY id_payments DESC";
 $query5 = mysqli_query($koneksi,$sql5);
@@ -56,7 +57,7 @@ while($payments = mysqli_fetch_assoc($query5)){
 
 foreach ($kursi as $item) {
         
-        $sql = "INSERT INTO bookings (id_users,seats_booked,total_price,booking_date,booking_time,id_movies,id_payments) VALUES ('$id_user','$item','$total','$tanggal','$waktu','$id_movies','$id_payments')";;
+        $sql = "INSERT INTO bookings (id_users,seats_booked,price,booking_date,booking_time,id_movies,id_payments) VALUES ('$id_user','$item','$price','$tanggal','$waktu','$id_movies','$id_payments')";;
         $query = mysqli_query($koneksi,$sql);
         $sql2 = "SELECT * FROM bookings ORDER BY id_bookings DESC ";
         $query2 = mysqli_query($koneksi,$sql2);

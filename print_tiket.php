@@ -33,7 +33,8 @@ $nm_kursi = [
 ];
 
 $j = 1;
-$i = 1;
+$l = 1;
+$i = 0;
 if($movies['genre']=='horor'){
   $g = 1;
 }elseif($movies['genre']=='komedi'){
@@ -48,19 +49,28 @@ $query2 = mysqli_query($koneksi,$sql2);
 $users = mysqli_fetch_assoc($query2);
 
 $id_bookings = $_POST['id_bookings'];
-$stat = true;
+$jumlah_tiket = count($id_bookings);
+
 foreach ($id_bookings as $booking){
   $sql3 = "SELECT status FROM bookings WHERE id_bookings = '$booking'";
   $query3 = mysqli_query($koneksi, $sql3); 
   $status = mysqli_fetch_assoc($query3);
 
   if($status['status'] == "terverifikasi"){
-    $stat = false;
+    $stat = 1;
+  }elseif($status['status']=="tertolak"){
+    $stat = 2;
+  }else{
+    $stat = 3;
   }
 
 }
 $method_payments = $_POST['method_payments'];
 $f = 1;
+$array_kursi = [];
+foreach ($kursi as $nomor) {
+    $array_kursi[] = $nm_kursi[$nomor];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -106,11 +116,7 @@ $f = 1;
     }
 
     /* ===== NAVBAR ===== */
-    @font-face {
-  src: url('font/BalsamiqSans.ttf') format('truetype');
-  font-family: 'BalsamiqSans';
-}
-header {
+    header {
       background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
       color: white;
       padding: 25px 40px;
@@ -123,7 +129,6 @@ header {
       border-radius: 0 0 30px 30px;
       box-shadow: 0 10px 30px rgba(198, 40, 40, 0.3);
       animation: navFadeIn 1s ease-in-out;
-      font-family: 'BalsamiqSans';
     }
 
     @keyframes navFadeIn {
@@ -225,27 +230,52 @@ header {
       transform: translateY(0);
     }
 
-    .dropdown button {
-      display: block;
-      background: linear-gradient(to right, #ff8a80, #ff5252);
-      color: white;
-      font-size: 18px;
-      font-weight: 500;
-      padding: 12px 20px;
-      margin: 10px 0;
-      width: 200px;
-      border: none;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+    .dropdown {
+  position: absolute;
+  top: 65px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 220px;
+}
 
-    .dropdown button:hover {
-      background: linear-gradient(to right, #ff1744, #e53935);
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
+.dropdown a {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown button {
+  display: block;
+  background: linear-gradient(to right, #ff8a80, #ff5252);
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 20px;
+  margin: 8px 0;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.dropdown button:hover {
+  background: linear-gradient(to right, #ff1744, #e53935);
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
     
     /* === NAVIGATION LINK STYLES === */
     a {
@@ -572,7 +602,7 @@ header {
     
     /* === PRINT SPECIFIC STYLES === */
     @media print {
-      .navbar, button {
+      header , button {
         display: none;
       }
     
@@ -673,9 +703,61 @@ header {
       margin-bottom: 25px;
     }
 
+    /* === REJECTION POPUP STYLES === */
+.rejection-popup {
+  background: linear-gradient(135deg, #ff4d4d, #c62828);
+  color: white;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 500px;
+  text-align: center;
+  margin: 50px auto;
+  position: relative;
+  transform: scale(0.8);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 20px 50px rgba(198, 40, 40, 0.5);
+}
 
+.rejection-popup::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+  animation: rotate 15s linear infinite;
+}
 
-    
+.rejection-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  animation: shake 0.5s infinite alternate;
+}
+
+@keyframes shake {
+  0% { transform: translateX(-5px); }
+  100% { transform: translateX(5px); }
+}
+
+.rejection-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rejection-message {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+.container {
+    display: flex;
+    flex-wrap: wrap; /* agar otomatis ke baris baru */
+    gap: 10px; /* jarak antar tiket */
+}
   </style>
 </head>
 <body>
@@ -694,7 +776,7 @@ header {
         <div class="dropdown" id="dropdownMenu">
             <?php if(isset($_SESSION['username'])){ ?>
                 <a href="profil_azfa.php"><button>Profil <?= $_SESSION['username'] ?></button></a>
-                <a href="keranjang.php"><button>Riwayat Transaksi</button></a>
+                <a href="keranjang.php"><button>keranjang</button></a>
                 <a href="logout.php"><button>Logout</button></a>
             <?php }else{ ?>
                 <a href="login.php"><button>Sign In</button></a>
@@ -714,8 +796,8 @@ header {
       }
     }
   </script>
-
-  <?php if ($stat == true): ?>
+  
+  <?php if ($stat == 3){ ?>
     <!-- INI BAGIAN LOADING -->
   
     <div class="popup-container">
@@ -726,6 +808,22 @@ header {
         
       </div>
     </div>
+    <script>
+    // Reload halaman setiap 5 detik untuk cek status lagi
+    setTimeout(function() {
+      location.reload();
+    }, 10000);
+  </script>
+
+    <?php } elseif ($stat == 2) { ?>
+  <div class="rejection-popup">
+    <div class="popup-content">
+      <div class="rejection-icon">❌</div>
+      <h2 class="rejection-title">Pesanan Ditolak</h2>
+      <p class="rejection-message">Mohon maaf pesananmu telah ditolak oleh admin.</p>
+    </div>
+  </div>
+
 
   <script>
     // Reload halaman setiap 5 detik untuk cek status lagi
@@ -734,71 +832,65 @@ header {
     }, 10000);
   </script>
 
-<?php else: ?>
+<?php }elseif ($stat == 1) { ?>
   <!-- BAGIAN PRINT TIKET -->
   
+  <?php foreach ($id_bookings as $id) { ?>
+    <div id='tiket<?=$l?>' class="container">
+      <main class="ticket-wrapper">
+        <div class="ticket-card" id="ticket">
+          <h2>TICKET</h2>
+          <div class="poster"><img  src="movie\<?= $movies['poster_image']?>" alt=""></div>
+          <h3><?= strtoupper($movies['title']) ?> - <span class="genre"><?= $movies['genre'] ?></span></h3>
+          <p class="subtext">Show this ticket at the entrance</p>
 
-  <main class="ticket-wrapper">
-    <div class="ticket-card" id="ticket">
-      <h2>TICKET</h2>
-      <div class="poster"><img  src="movie\<?= $movies['poster_image']?>" alt=""></div>
-      <h3><?= strtoupper($movies['title']) ?> - <span class="genre"><?= $movies['genre'] ?></span></h3>
-      <p class="subtext">Show this ticket at the entrance</p>
-
-      <div class="ticket-details">
-        <div>
-          <strong>CINEMA</strong><br>AZFA BIOSKOP MALL XXI
-        </div>
-        <div>
-          <strong>DATE</strong><br><?= $tanggal_hari ?> <?= $bulan ?> <?= $tahun ?>
-        </div>
-        <div>
-          <strong>TIMER</strong><br><?= $jam ?>:<?= $menit ?>
-        </div>
-        <div>
-          <strong>STUDIO</strong><br><?= $g ?>
-        </div>
-        <div>
-          <strong>SEAT</strong><br><?php foreach ($kursi as $nomor) {
-            $array_kursi = "{$nm_kursi[$nomor]}";
-            if($i !== 1){
-                echo ", ";
-            }
-            $i += 1;
-
-            echo htmlspecialchars($array_kursi);
-        } ?>
-        </div>
-        <div>
-          <strong>COST</strong><br>Rp. <?= $total ?>
-        </div>
-        <div>
-          <strong>ID ORDER</strong><br><?php foreach ($id_bookings as $id) {
+          <div class="ticket-details">
+            <div>
+              <strong>CINEMA</strong><br>AZFA BIOSKOP MALL XXI
+            </div>
+            <div>
+              <strong>DATE</strong><br><?= $tanggal_hari ?> <?= $bulan ?> <?= $tahun ?>
+            </div>
+            <div>
+              <strong>TIMER</strong><br><?= $jam ?>:<?= $menit ?>
+            </div>
+            <div>
+              <strong>STUDIO</strong><br><?= $g ?>
+            </div>
+            <div>
+              <strong>SEAT</strong><br><?php 
+                   echo $array_kursi[$i];
+                   $i += 1;
+              ?>
+            </div>
+            <div>
+              <strong>COST</strong><br>Rp. <?= $total ?>
+            </div>
+            <div>
+              <strong>ID BOOKINGS</strong><br><?php 
+                echo htmlspecialchars($id);
+            ?>
+            </div>
+            <div>
+              <strong>PAYMENTS</strong>
+              <br>
+              <?= strtoupper($method_payments) ?>
           
-            if($j !== 1){
-                echo ", ";
-            }
-            $j += 1;
+            </div>
+          </div>
 
-            echo htmlspecialchars($id);
-        }?>
-        </div>
-        <div>
-          <strong>PAYMENTS</strong>
-          <br>
-          <?= strtoupper($method_payments) ?>
-          
-        </div>
-      </div>
-
-      <hr />
+          <hr />
       <div class="barcode"></div>
+        </div>
+        
+      </main>
     </div>
-
+  <?php $l+=1; } ?>
+  <main class="ticket-wrapper">
     <button onclick="window.print()">PRINT</button>
   </main>
+<?php } ?>
 
-<?php endif; ?>
 
   
 </body>
