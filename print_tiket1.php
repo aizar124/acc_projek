@@ -78,8 +78,6 @@ foreach ($kursi as $nomor) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cetak Tiket - AZFATiCKET.XXI</title>
-  <!-- Menambahkan library JsBarcode -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
     /* === BASE STYLES === */
     @font-face {
@@ -217,44 +215,67 @@ foreach ($kursi as $nomor) {
       border-radius: 16px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(8px);
-      padding: 15px;
+      padding: 10px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
       transition: all 0.3s ease;
       z-index: 100;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      width: 220px;
     }
 
-    .dropdown a {
-      display: block;
-      margin: 0;
-      padding: 0;
+    .dropdown.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
 
-    .dropdown button {
-      display: block;
-      background: linear-gradient(to right, #ff8a80, #ff5252);
-      color: white;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 12px 20px;
-      margin: 8px 0;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: left;
-    }
+    .dropdown {
+  position: absolute;
+  top: 65px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 220px;
+}
 
-    .dropdown button:hover {
-      background: linear-gradient(to right, #ff1744, #e53935);
-      transform: scale(1.02);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
+.dropdown a {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown button {
+  display: block;
+  background: linear-gradient(to right, #ff8a80, #ff5252);
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 20px;
+  margin: 8px 0;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.dropdown button:hover {
+  background: linear-gradient(to right, #ff1744, #e53935);
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
     
     /* === NAVIGATION LINK STYLES === */
     a {
@@ -487,10 +508,21 @@ foreach ($kursi as $nomor) {
       z-index: 3;
     }
     
-    .barcode img {
+    .barcode::before {
+      content: '';
+      position: absolute;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      background: 
+        /* Barcode pattern */
+        repeating-linear-gradient(90deg, 
+          #000, #000 2px, 
+          transparent 2px, transparent 4px),
+        /* Glossy overlay */
+        linear-gradient(180deg, 
+          rgba(255,255,255,0.7) 0%, 
+          rgba(255,255,255,0.2) 50%, 
+          rgba(255,255,255,0) 100%);
     }
     
     .barcode::after {
@@ -502,6 +534,16 @@ foreach ($kursi as $nomor) {
       color: #c62828;
       font-weight: bold;
       text-transform: uppercase;
+    }
+    
+    /* Subtle shine animation */
+    @keyframes barcodeShine {
+      0% { background-position: -100px 0; }
+      100% { background-position: 100px 0; }
+    }
+    
+    .barcode:hover::before {
+      animation: barcodeShine 1.5s ease-in-out;
     }
     
     /* === PRINT BUTTON STYLES === */
@@ -588,19 +630,13 @@ foreach ($kursi as $nomor) {
       .ticket-card::before {
         height: 6px;
       }
+    
+      .barcode::before {
+        animation: none;
+      }
       
       .poster {
         height: 200px;
-      }
-      
-      /* Memastikan barcode terlihat jelas saat dicetak */
-      .barcode {
-        background: white !important;
-        border: 1px solid #000 !important;
-      }
-      
-      .barcode svg {
-        filter: contrast(200%) !important;
       }
     }
     /* === PREMIUM POPUP STYLES === */
@@ -844,34 +880,17 @@ foreach ($kursi as $nomor) {
           </div>
 
           <hr />
-          <!-- Barcode yang fungsional -->
-          <div class="barcode">
-            <svg id="barcode-<?= $id ?>" class="barcode-svg"></svg>
-          </div>
+      <div class="barcode"></div>
         </div>
         
       </main>
     </div>
-    
-    <script>
-      // Generate barcode untuk setiap tiket
-      JsBarcode("#barcode-<?= $id ?>", "<?= $id ?>", {
-        format: "CODE128",
-        lineColor: "#000",
-        width: 2,
-        height: 40,
-        displayValue: true,
-        fontOptions: "bold",
-        fontSize: 12,
-        margin: 5
-      });
-    </script>
-    
   <?php $l+=1; } ?>
   <main class="ticket-wrapper">
     <button onclick="window.print()">PRINT</button>
   </main>
 <?php } ?>
+
 
   
 </body>

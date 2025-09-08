@@ -4,11 +4,10 @@ session_start();
 
 if(!isset($_POST['id_movies']) || !isset($_POST['tanggal']) || !isset($_POST['waktu']) || !isset($_POST['kursi'])){
   header("location:jadwal_film.php");
-  exit();
 }
 unset($_SESSION['waktu']);
-unset($_SESSION['tanggal']);
-unset($_SESSION['id_movies']);
+    unset($_SESSION['tanggal']);
+    unset($_SESSION['id_movies']);
 $id_movies = $_POST['id_movies'];
 $sql = "SELECT * FROM movies WHERE id_movies = '$id_movies'";
 $query = mysqli_query($koneksi, $sql);
@@ -77,8 +76,7 @@ $i = 1;
     body {
       font-family: 'Open Sans', sans-serif;
       background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
+      
     }
     /* === NAVBAR === */
     header {
@@ -204,7 +202,10 @@ $i = 1;
       transform: scale(1.05);
     }
     
-    /* === TICKET CONTAINER === */
+    
+    
+    
+
     .ticket-container {
       display: flex;
       margin: 0 auto;
@@ -480,66 +481,6 @@ $i = 1;
       display: none;
     }
 
-    /* === STYLE UNTUK POPUP PERINGATAN === */
-    .alert-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    
-    .alert-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      animation: alertFadeIn 0.3s ease-out;
-    }
-    
-    @keyframes alertFadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    
-    .alert-icon {
-      font-size: 50px;
-      color: #ff2e63;
-      margin-bottom: 15px;
-    }
-    
-    .alert-message {
-      font-size: 18px;
-      margin-bottom: 25px;
-      color: #333;
-      line-height: 1.5;
-    }
-    
-    .alert-button {
-      background: linear-gradient(90deg, #ff2e63, #ff5a5a);
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 16px;
-      transition: all 0.3s;
-    }
-    
-    .alert-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 46, 99, 0.4);
-    }
-
     /* Responsive design */
     @media (max-width: 768px) {
       .ticket-container {
@@ -626,11 +567,11 @@ $i = 1;
             echo htmlspecialchars($array_kursi);
         } ?>)</span> <span>Rp. <?= number_format($harga, 0, ',', '.'); ?> x <?= $jumlah_kursi ?></span></p>
         <p><span>Layanan</span> <span>Rp. 3.000</span></p>
-        <p class="total"><span>Total Pembayaran:</span> <span>Rp. <?= number_format($total, 0, ',', '.'); ?></span></p>
+        <p class="total"><span>Total Pembayaran:</span> <span>Rp. <?= $total ?></span></p>
       </div>
       
-      <!-- FORM UPLOAD BUKTI PEMBAYARAN -->
-      <form action="proses_transaksi.php" method="post" enctype="multipart/form-data" id="payment-form">
+      <!-- TAMBAHAN FORM UPLOAD BUKTI PEMBAYARAN -->
+      <form action="proses_transaksi.php" method="post" enctype="multipart/form-data">
         <?php foreach($kursi as $input){ ?>
           <input type="hidden" name="kursi[]" value="<?= $input ?>">
         <?php } ?>
@@ -644,7 +585,7 @@ $i = 1;
           <h3>Metode Pembayaran</h3>
           
           <div class="payment-option" onclick="selectPayment('bca')">
-            <input type="radio" name="payment_method" value="bca" id="bca">
+            <input type="radio" name="payment_method" value="bca" id="bca" required>
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/1200px-Bank_Central_Asia.svg.png" alt="BCA">
             <label for="bca">Transfer BCA</label>
           </div>
@@ -669,23 +610,12 @@ $i = 1;
               <div class="upload-hint">Format: JPG, PNG (Maks. 2MB)</div>
               <img id="proof-preview" src="#" alt="Preview Bukti Pembayaran">
             </div>
-            <input type="file" id="file-input" name="payment_proof" accept=".jpg,.jpeg,.png" onchange="previewImage(this)">
+            <input type="file" id="file-input" name="payment_proof" accept=".jpg,.jpeg,.png" onchange="previewImage(this)" required>
           </div>
         </div>
 
-        <button type="button" onclick="validateForm()">KONFIRMASI PEMBAYARAN</button>
+        <button type="submit">KONFIRMASI PEMBAYARAN</button>
       </form>
-      
-      <!-- POPUP PERINGATAN -->
-      <div class="alert-overlay" id="alert-overlay">
-        <div class="alert-box">
-          <div class="alert-icon">⚠️</div>
-          <div class="alert-message" id="alert-message">
-            Silakan pilih metode pembayaran dan upload bukti pembayaran
-          </div>
-          <button class="alert-button" onclick="closeAlert()">Mengerti</button>
-        </div>
-      </div>
       
     </div>
   </main>
@@ -694,7 +624,6 @@ $i = 1;
     // Fungsi untuk menampilkan section upload setelah memilih metode pembayaran
     function selectPayment(method) {
       document.getElementById('upload-section').style.display = 'block';
-      document.getElementById(method).checked = true;
     }
     
     // Fungsi untuk preview gambar yang diupload
@@ -714,36 +643,6 @@ $i = 1;
         
         reader.readAsDataURL(file);
       }
-    }
-    
-    // Fungsi validasi form
-    function validateForm() {
-      const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
-      const paymentProof = document.getElementById('file-input').files.length;
-      
-      if (!paymentMethod) {
-        showAlert('Silakan pilih metode pembayaran terlebih dahulu');
-        return;
-      }
-      
-      if (!paymentProof) {
-        showAlert('Silakan upload bukti pembayaran terlebih dahulu');
-        return;
-      }
-      
-      // Jika semua validasi terpenuhi, submit form
-      document.getElementById('payment-form').submit();
-    }
-    
-    // Fungsi untuk menampilkan alert
-    function showAlert(message) {
-      document.getElementById('alert-message').textContent = message;
-      document.getElementById('alert-overlay').style.display = 'flex';
-    }
-    
-    // Fungsi untuk menutup alert
-    function closeAlert() {
-      document.getElementById('alert-overlay').style.display = 'none';
     }
   </script>
   

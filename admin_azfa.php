@@ -54,6 +54,15 @@ if(isset($_POST['tokoh'])){
 $sql13 = "SELECT id_payments FROM payments ORDER BY id_payments DESC" ;
 $query13 = mysqli_query($koneksi,$sql13);
 
+$nm_kursi = [
+    '1' => 'A1', '2' => 'A2', '3' => 'A3', '4' => 'A4', '5' => 'A5', '6' => 'A6', '7' => 'A7', '8' => 'A8', '9' => 'A9', '10' => 'A10',
+     '11' => 'A11', '12' => 'A12', '13' => 'B1', '14' => 'B2', '15' => 'B3', '16' => 'B4', '17' => 'B5', '18' => 'B6', '19' => 'B7', '20' => 'B8', 
+     '21' => 'B9', '22' => 'B10', '23' => 'B11', '24' => 'B12', '25' => 'B13' , '26' => 'B14', '27' => 'C1', '28' => 'C2', '29' => 'C3',
+     '30' => 'C4', '31' => 'C5', '32' => 'C6', '33' => 'C7', '34' => 'C8', '35' => 'C9', '36' => 'C10', '37' => 'C11', '38' => 'C12',
+     '39' => 'D1', '40' => 'D2', '41' => 'D3', '42' => 'D4', '43' => 'D5', '44' => 'D6', '45' => 'D7', '46' => 'D8', '47' => 'D9', 
+     '48' => 'D10', '49' => 'D11', '50' => 'E1', '51' => 'E2', '52' => 'E3', '53' => 'E4', '54' => 'E5', '55' => 'E6', '56' => 'E7', 
+     '57' => 'E8', '58' => 'E9', '59' => 'E10', '60' => 'E11' , '61' => 'E12', '62' => 'E13'
+];
 
 
 ?>
@@ -1003,7 +1012,7 @@ button[type="submit"]:hover::after {
             <tr>
               <td><?= $booking['id_bookings']; ?></td>
               <td><?= $booking['id_users']; ?></td>
-              <td><?= $booking['seats_booked']; ?></td>
+              <td><?= $nm_kursi[$booking['seats_booked']]; ?></td>
               <td><?= $booking['price']; ?></td>
               <td><?= $booking['booking_date']; ?></td>
               <td><?= $booking['booking_time']; ?></td>
@@ -1081,7 +1090,7 @@ button[type="submit"]:hover::after {
                         if($i !== 1){
                             $text2 = $text2 . ", ";
                         }
-                        $text2 = $text2 . $seats_booked;
+                        $text2 = $text2 . $nm_kursi[$seats_booked];
                         $i += 1;
                     }
                     
